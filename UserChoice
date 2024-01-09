@@ -1,0 +1,79 @@
+import java.util.Scanner;
+
+public class UserChoice {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Select an option:");
+        System.out.println("1. Check if a number is even or odd");
+        System.out.println("2. Calculate grade based on marks");
+        System.out.println("3. Find cube if divisible by 5");
+        System.out.println("4. Find the greatest of three numbers");
+
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+                System.out.print("Enter a number: ");
+                int number = scanner.nextInt();
+                String result = checkEvenOdd(number);
+                System.out.println("The given number is " + result + ".");
+                break;
+            case 2:
+                System.out.print("Enter marks in a subject: ");
+                int marks = scanner.nextInt();
+                String grade = calculateGrade(marks);
+                System.out.println("The grade for the given marks is " + grade + ".");
+                break;
+            case 3:
+                System.out.print("Enter a number: ");
+                int cubeNumber = scanner.nextInt();
+                int cubeResult = findCubeIfDivisibleBy5(cubeNumber);
+                System.out.println("The cube of the number (if divisible by 5) is " + cubeResult + ".");
+                break;
+            case 4:
+                System.out.print("Enter the first number: ");
+                int num1 = scanner.nextInt();
+                System.out.print("Enter the second number: ");
+                int num2 = scanner.nextInt();
+                System.out.print("Enter the third number: ");
+                int num3 = scanner.nextInt();
+                int maxNumber = findGreatestOfThreeNumbers(num1, num2, num3);
+                System.out.println("The greatest number among the three is " + maxNumber + ".");
+                break;
+            default:
+                System.out.println("Invalid choice. Please enter 1, 2, 3, or 4.");
+        }
+
+        scanner.close();
+    }
+
+    private static String checkEvenOdd(int number) {
+        return (number % 2 == 0) ? "Even" : "Odd";
+    }
+
+    private static String calculateGrade(int marks) {
+        if (marks >= 90) {
+            return "A+";
+        } else if (marks >= 80) {
+            return "A";
+        } else if (marks >= 70) {
+            return "B";
+        } else if (marks >= 60) {
+            return "C";
+        } else if (marks >= 50) {
+            return "D";
+        } else {
+            return "F";
+        }
+    }
+
+    private static int findCubeIfDivisibleBy5(int number) {
+        return (number % 5 == 0) ? number * number * number : -1; // -1 indicates not divisible by 5
+    }
+
+    private static int findGreatestOfThreeNumbers(int num1, int num2, int num3) {
+        return Math.max(Math.max(num1, num2), num3);
+    }
+}
