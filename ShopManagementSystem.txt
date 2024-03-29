@@ -1,0 +1,165 @@
+import java.sql.*;
+import java.util.Scanner;
+public class ShopManagementSystem 
+{
+
+    static final String JDBC_URL = "jdbc:mysql://localhost:3306/shop";
+    static final String USERNAME = "your_username";
+    static final String PASSWORD = "your_password";
+
+    public static void main(String[] args)
+    {
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD)) 
+        {
+            System.out.println("Connected to the database");
+
+            displayMenu(connection);
+        } 
+       catch (SQLException e) 
+       {
+            e.printStackTrace();
+        }
+    }
+
+    public static void displayMenu(Connection connection) 
+    {
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+        do {
+            System.out.println("\n1. Add Item");
+            System.out.println("2. View Items");
+            System.out.println("3. Update Item");
+            System.out.println("4. Delete Item");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); 
+            switch (choice) 
+            {
+                case 1:
+                    addItem(connection);
+                    break;
+                case 2:
+                    viewItems(connection);
+                    break;
+                case 3:
+                    updateItem(connection);
+                    break;
+                case 4:
+                    deleteItem(connection);
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please enter a valid option.");
+            }
+        } while (choice != 5);
+    }
+
+    public static void addItem(Connection connection)
+    {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter item name:");
+            String name = scanner.nextLine();
+            System.out.println("Enter item price:");
+            double price = scanner.nextDouble();
+            System.out.println("Enter item quantity:");
+            int quantity = scanner.nextInt();
+
+            String query = "INSERT INTO items (name, price, quantity) VALUES (?, ?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query))
+            {
+                preparedStatement.setString(1, name);
+                preparedStatement.setDouble(2, price);
+                preparedStatement.setInt(3, quantity);
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0) 
+                {
+                    System.out.println("Item added successfully!");
+                } 
+              else 
+               {
+                    System.out.println("Failed to add item!");
+                }
+            }
+        } 
+        catch (SQLException e) 
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void viewItems(Connection connection) {
+        try {
+            String query = "SELECT * FROM items";
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(query)) {
+                while (resultSet.next()) {
+                    System.out.println("ID: " + resultSet.getInt("id") + ", Name: " + resultSet.getString("name") +
+                            ", Price: " + resultSet.getDouble("price") + ", Quantity: " + resultSet.getInt("quantity"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateItem(Connection connection)
+    {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter item ID to update:");
+            int id = scanner.nextInt();
+            System.out.println("Enter new quantity:");
+            int quantity = scanner.nextInt();
+
+            String query = "UPDATE items SET quantity = ? WHERE id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query))
+            {
+                preparedStatement.setInt(1, quantity);
+                preparedStatement.setInt(2, id);
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0) 
+                {
+                    System.out.println("Item updated successfully!");
+                } else
+                {
+                    System.out.println("Failed to update item!");
+                }
+            }
+        } 
+         catch (SQLException e) 
+         {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteItem(Connection connection)
+    {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter item ID to delete:");
+            int id = scanner.nextInt();
+
+            String query = "DELETE FROM items WHERE id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) 
+            {
+                preparedStatement.setInt(1, id);
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0)
+                {
+                    System.out.println("Item deleted successfully!");
+                } 
+             else 
+                {
+                    System.out.println("Failed to delete item!");
+                }
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+}
